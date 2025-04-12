@@ -71,7 +71,7 @@ Think of it as the digital lovechild of a theremin and a Kinect, wrapped in a [M
 ## 🛠️ Technical Stack
 
 - **Frontend**: HTML, CSS, JavaScript (over CDN, no build tooling needed!)
-- **Hand Tracking**: [MediaPipe Hands](https://google.github.io/mediapipe/solutions/hands.html)
+- **Hand Tracking**: [MediaPipe Hands](https://blog.tensorflow.org/2021/11/3D-handpose.html?m=1)
 - **Audio Synthesis**: [Tone.js](https://tonejs.github.io/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 
