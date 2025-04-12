@@ -1,0 +1,294 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Rubik', sans-serif;
+}
+
+body {
+    background-color: #000;
+    color: white;
+    overflow: hidden;
+}
+
+.webcam-feed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* transform: scaleX(-1); */
+    filter: contrast(1.2) brightness(0.9) grayscale(1);
+}
+
+.output-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* transform: scaleX(-1); */
+    pointer-events: none;
+    z-index: 10;
+}
+
+.coordinates-container {
+    /* transform: scaleX(-1); */
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* transform: scaleX(-1); */
+    pointer-events: none;
+    z-index: 10;
+}
+
+.grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+}
+
+.coordinate-display {
+    padding: 5px 10px;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 101;
+    position: absolute;
+    pointer-events: none;
+}
+
+.debug-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+.debug-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.control-zone {
+    position: absolute;
+    pointer-events: none;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    z-index: 90;
+}
+
+.pitch-zone {
+    border-color: rgba(255, 165, 0, 0.5);
+}
+
+.volume-zone {
+    border-color: rgba(0, 255, 255, 0.5);
+}
+
+.readings {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px;
+    border-radius: 8px;
+    font-family: monospace;
+    z-index: 100;
+}
+
+.current-note {
+    font-size: 48px;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+.hand-aura {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(15px);
+    transition: all 0.2s ease;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 95;
+}
+
+.rotation-guide {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px dashed rgba(0, 255, 255, 0.5);
+    pointer-events: none;
+    z-index: 90;
+    transition: all 0.5s ease;
+}
+
+.rotation-marker {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+    z-index: 91;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Keyboard shortcuts indicator */
+.keyboard-shortcuts {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    z-index: 101;
+    display: flex;
+    gap: 15px;
+}
+
+.key {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-right: 5px;
+    font-family: monospace;
+}
+
+/* Landmark points styling for MediaPipe */
+.landmark-point {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+}
+
+/* Landmark connector styling */
+.landmark-connector {
+    position: absolute;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.6);
+    transform-origin: left center;
+    pointer-events: none;
+    z-index: 99;
+}
+
+/* Specific landmark colors */
+.wrist {
+    background-color: rgba(255, 0, 128, 0.7);
+    width: 20px;
+    height: 20px;
+}
+
+.thumb-tip {
+    background-color: rgba(255, 0, 0, 0.7);
+}
+
+.index-tip {
+    background-color: rgba(255, 165, 0, 0.7);
+}
+
+.middle-tip {
+    background-color: rgba(255, 255, 0, 0.7);
+}
+
+.ring-tip {
+    background-color: rgba(0, 255, 0, 0.7);
+}
+
+.pinky-tip {
+    background-color: rgba(0, 128, 255, 0.7);
+}
+
+.joint {
+    width: 8px;
+    height: 8px;
+    opacity: 0.5;
+}
+
+.fps-counter {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    z-index: 1000;
+}

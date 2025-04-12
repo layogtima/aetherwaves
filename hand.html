@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ÆTHERWAVES: Callibration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MediaPipe dependencies -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="hand.css" />
+  </head>
+  <body class="h-screen w-screen overflow-hidden bg-black text-white">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+      <div class="loading-spinner"></div>
+      <h2 class="text-2xl mb-4 tracking-widest" id="loadingMessage">
+        INITIALIZING HAND DETECTION SYSTEMS
+      </h2>
+      <p class="text-sm opacity-50" id="loadingSubMessage">
+        Loading MediaPipe...
+      </p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative h-full w-full">
+      <!-- Webcam Video Feed -->
+      <video id="webcam" class="webcam-feed" autoplay playsinline></video>
+
+      <!-- Output Canvas for MediaPipe -->
+      <canvas id="output" class="output-canvas"></canvas>
+
+      <div id="coordinates" class="coordinates-container"></div>
+
+      <!-- Grid Overlay -->
+      <div class="grid-overlay">
+        <svg
+          width="100%"
+          height="100%"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          id="gridSvg"
+        >
+          <!-- Grid lines will be added via JavaScript -->
+        </svg>
+      </div>
+
+      <!-- Control Zones -->
+      <div id="pitchZone" class="control-zone pitch-zone hidden"></div>
+      <div id="volumeZone" class="control-zone volume-zone hidden"></div>
+
+      <!-- Title -->
+      <h1
+        class="absolute top-8 w-full text-center text-5xl tracking-widest z-10 opacity-80"
+      >
+        ÆTHERWAVES: HAND CALLIBRATION
+      </h1>
+
+      <!-- Control Panel -->
+      <div class="absolute right-8 top-8 z-10 flex flex-col items-end">
+        <h2 class="text-xl mb-6 tracking-widest opacity-70">DEBUG CONTROLS</h2>
+        <button
+          id="startButton"
+          class="w-48 py-3 mb-6 text-center tracking-widest hover:bg-white hover:text-black transition-all text-sm border border-white/30"
+        >
+          INITIATE TRACKING
+        </button>
+
+        <div class="mb-6 w-48">
+          <div class="text-xs tracking-wider opacity-70 mb-2">
+            VISUALIZATION
+          </div>
+          <div class="flex flex-col space-y-2">
+            <label class="flex items-center">
+              <input type="checkbox" id="showLandmarks" checked class="mr-2" />
+              <span class="text-sm">Show Landmarks</span>
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" id="showConnectors" checked class="mr-2" />
+              <span class="text-sm">Show Connectors</span>
+            </label>
+            <label class="flex items-center">
+              <input
+                type="checkbox"
+                id="showCoordinates"
+                checked
+                class="mr-2"
+              />
+              <span class="text-sm">Show Coordinates</span>
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" id="showAura" checked class="mr-2" />
+              <span class="text-sm">Show Theremin Aura</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="mb-6 w-48">
+          <div class="text-xs tracking-wider opacity-70 mb-2">ADVANCED</div>
+          <div class="flex flex-col space-y-2">
+            <label class="flex items-center">
+              <input type="checkbox" id="filterResults" checked class="mr-2" />
+              <span class="text-sm">Smooth Tracking</span>
+            </label>
+            <div class="flex items-center justify-between mt-2">
+              <span class="text-sm">Smoothing:</span>
+              <input
+                type="range"
+                id="smoothingRange"
+                min="0"
+                max="0.95"
+                step="0.05"
+                value="0.5"
+                class="w-24"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hand Data Panel -->
+      <div
+        id="handData"
+        class="absolute left-8 bottom-8 z-10 bg-black/50 p-4 rounded-lg max-w-xs"
+      >
+        <h2 class="text-xl mb-4 tracking-widest opacity-70">HAND DATA</h2>
+        <pre
+          id="handDataText"
+          class="text-xs font-mono opacity-80 max-h-48 overflow-y-auto"
+        >
+Waiting for hand detection...</pre
+        >
+      </div>
+
+      <!-- Theremin Readings -->
+      <div id="thereminReadings" class="readings hidden">
+        <div id="currentNote" class="current-note">-</div>
+        <div class="text-sm">
+          <div>FREQ: <span id="frequencyValue">0.00</span> Hz</div>
+          <div>VOL: <span id="volumeValue">0</span>%</div>
+          <div>ROT: <span id="rotationValue">0</span>°</div>
+        </div>
+      </div>
+
+      <!-- Key Points Label -->
+      <div class="absolute right-8 bottom-8 z-10 bg-black/50 p-4 rounded-lg">
+        <h3 class="text-sm mb-2 tracking-widest opacity-70">HAND LANDMARKS</h3>
+        <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+          <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full bg-pink-500 mr-2"></div>
+            <span class="text-xs">Wrist</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+            <span class="text-xs">Thumb</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full bg-orange-500 mr-2"></div>
+            <span class="text-xs">Index</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+            <span class="text-xs">Middle</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
+            <span class="text-xs">Ring</span>
+          </div>
+          <div class="flex items-center">
+            <div class="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+            <span class="text-xs">Pinky</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Button -->
+      <button id="toggleDebugPanel" class="debug-button">
+        TOGGLE FULL DEBUG
+      </button>
+    </div>
+
+    <script src="hand.js"></script>
+  </body>
+</html>
