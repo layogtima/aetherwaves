@@ -12,7 +12,7 @@ Think of it as the digital lovechild of a theremin and a Kinect, wrapped in a [M
 
 ## 🚀 Getting Started
 
-1. Visit [https://aether.layogtima.com/](https://aether.layogtima.com/) in a web-standard compliant browser (e.g. Safari does NOT work for the moment :()
+1. Visit [https://aether.layogtima.com/](https://aether.layogtima.com/) in a web-standards compliant browser (e.g. Safari does NOT work for the moment :()
 2. Allow camera access when prompted
 3. Click "INITIATE THEREMIN" to begin
 4. Position your hands in view of the camera:
@@ -70,7 +70,7 @@ Think of it as the digital lovechild of a theremin and a Kinect, wrapped in a [M
 ## 🛠️ Technical Stack
 
 - **Frontend**: HTML, CSS, JavaScript (over CDN, no build tooling needed!)
-- **Hand Tracking**: [MediaPipe Hands](https://google.github.io/mediapipe/solutions/hands.html)
+- **Hand Tracking**: [MediaPipe Hands](https://blog.tensorflow.org/2021/11/3D-handpose.html?m=1)
 - **Audio Synthesis**: [Tone.js](https://tonejs.github.io/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 
