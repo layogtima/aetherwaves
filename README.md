@@ -1,6 +1,6 @@
 # ÆTHERWAVES
 
-[![ÆTHERWAVES](https://aether.layogtima.com/screenshot.png?burssst)](https://aether.layogtima.com/)
+[![ÆTHERWAVES](https://aether.layogtima.com/screenshot.png?burssst)](https://www.youtube.com/watch?v=5AtV0r8mlt4&feature=youtu.be)
 
 **Make eerie, ethereal music with your bare hands through this no-touch instrument. Perfect for aspiring electronic musicians, sci-fi enthusiasts, and anyone who's ever wanted to look like they're casting spells while making music!**
 
